@@ -113,8 +113,8 @@ API_KEY=your_cloudinary_api_key
 API_SECRET=your_cloudinary_api_secret
 
 # ====== Payment Gateway (Stripe) ======
-STRIPE_SECRET_KEY=your_stripe_secret_key
-STRIPE_PUBLISHABLE_KEY=your_stripe_publishable_key
+RAZORPAY_SECRET=your_stripe_secret_key
+RAZORPAY_KEY=your_stripe_publishable_key
 
 # ====== Email Service (Gmail) ======
 MAIL_HOST=smtp.gmail.com
@@ -197,3 +197,4 @@ npm test
 ---
 
 ## 💡 Empowering digital learning for everyone – students & educators alike! 🚀
+
