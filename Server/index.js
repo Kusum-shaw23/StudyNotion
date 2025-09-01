@@ -56,9 +56,9 @@ app.get("/", (req, res) => {
 	});
 });
 
-// Listening to the server
+// Listening to the server or activate
 app.listen(PORT, () => {
 	console.log(`App is listening at ${PORT}`);
 });
 
-// End of code.
+

@@ -18,6 +18,8 @@ import MyCourses from "./components/core/Dashboard/MyCourses"
 import MyProfile from "./components/core/Dashboard/MyProfile"
 import Settings from "./components/core/Dashboard/Settings"
 import VideoDetails from "./components/core/ViewCourse/VideoDetails"
+
+// Pages
 import About from "./pages/About"
 import Catalog from "./pages/Catalog"
 import Contact from "./pages/Contact"
@@ -25,13 +27,13 @@ import CourseDetails from "./pages/CourseDetails"
 import Dashboard from "./pages/Dashboard"
 import Error from "./pages/Error"
 import ForgotPassword from "./pages/ForgotPassword"
-// Pages
 import Home from "./pages/Home"
 import Login from "./pages/Login"
 import Signup from "./pages/Signup"
 import UpdatePassword from "./pages/UpdatePassword"
 import VerifyEmail from "./pages/VerifyEmail"
 import ViewCourse from "./pages/ViewCourse"
+
 import { getUserDetails } from "./services/operations/profileAPI"
 import { ACCOUNT_TYPE } from "./utils/constants"
 
@@ -40,10 +42,18 @@ function App() {
   const navigate = useNavigate()
   const { user } = useSelector((state) => state.profile)
 
+  // Load user if token exists
   useEffect(() => {
-    if (localStorage.getItem("token")) {
-      const token = JSON.parse(localStorage.getItem("token"))
-      dispatch(getUserDetails(token, navigate))
+    try {
+      const rawToken = localStorage.getItem("token")
+      if (rawToken && rawToken !== "undefined") {
+        const token = JSON.parse(rawToken)
+        if (token) {
+          dispatch(getUserDetails(token, navigate))
+        }
+      }
+    } catch (err) {
+      console.error("Error reading token from localStorage:", err)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -52,14 +62,16 @@ function App() {
     <div className="flex min-h-screen w-screen flex-col bg-richblack-900 font-inter">
       <Navbar />
       <Routes>
+        {/* Public Pages */}
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
-        <Route path="courses/:courseId" element={<CourseDetails />} />
-        <Route path="catalog/:catalogName" element={<Catalog />} />
-        {/* Open Route - for Only Non Logged in User */}
+        <Route path="/courses/:courseId" element={<CourseDetails />} />
+        <Route path="/catalog/:catalogName" element={<Catalog />} />
+
+        {/* Open Routes (for non-logged-in users) */}
         <Route
-          path="login"
+          path="/login"
           element={
             <OpenRoute>
               <Login />
@@ -67,7 +79,7 @@ function App() {
           }
         />
         <Route
-          path="forgot-password"
+          path="/forgot-password"
           element={
             <OpenRoute>
               <ForgotPassword />
@@ -75,7 +87,7 @@ function App() {
           }
         />
         <Route
-          path="update-password/:id"
+          path="/update-password/:id"
           element={
             <OpenRoute>
               <UpdatePassword />
@@ -83,7 +95,7 @@ function App() {
           }
         />
         <Route
-          path="signup"
+          path="/signup"
           element={
             <OpenRoute>
               <Signup />
@@ -91,14 +103,15 @@ function App() {
           }
         />
         <Route
-          path="verify-email"
+          path="/verify-email"
           element={
             <OpenRoute>
               <VerifyEmail />
             </OpenRoute>
           }
         />
-        {/* Private Route - for Only Logged in User */}
+
+        {/* Private Routes (only logged-in users) */}
         <Route
           element={
             <PrivateRoute>
@@ -106,10 +119,11 @@ function App() {
             </PrivateRoute>
           }
         >
-          {/* Route for all users */}
+          {/* Routes for all users */}
           <Route path="dashboard/my-profile" element={<MyProfile />} />
-          <Route path="dashboard/Settings" element={<Settings />} />
-          {/* Route only for Instructors */}
+          <Route path="dashboard/settings" element={<Settings />} />
+
+          {/* Routes for Instructors */}
           {user?.accountType === ACCOUNT_TYPE.INSTRUCTOR && (
             <>
               <Route path="dashboard/instructor" element={<Instructor />} />
@@ -121,20 +135,20 @@ function App() {
               />
             </>
           )}
-          {/* Route only for Students */}
+
+          {/* Routes for Students */}
           {user?.accountType === ACCOUNT_TYPE.STUDENT && (
             <>
               <Route
                 path="dashboard/enrolled-courses"
                 element={<EnrolledCourses />}
               />
-              <Route path="/dashboard/cart" element={<Cart />} />
+              <Route path="dashboard/cart" element={<Cart />} />
             </>
           )}
-          <Route path="dashboard/settings" element={<Settings />} />
         </Route>
 
-        {/* For the watching course lectures */}
+        {/* Viewing course lectures (students only) */}
         <Route
           element={
             <PrivateRoute>
@@ -143,16 +157,14 @@ function App() {
           }
         >
           {user?.accountType === ACCOUNT_TYPE.STUDENT && (
-            <>
-              <Route
-                path="view-course/:courseId/section/:sectionId/sub-section/:subSectionId"
-                element={<VideoDetails />}
-              />
-            </>
+            <Route
+              path="view-course/:courseId/section/:sectionId/sub-section/:subSectionId"
+              element={<VideoDetails />}
+            />
           )}
         </Route>
 
-        {/* 404 Page */}
+        {/* 404 Fallback */}
         <Route path="*" element={<Error />} />
       </Routes>
     </div>

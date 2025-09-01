@@ -22,16 +22,29 @@ exports.createCourse = async (req, res) => {
       category,
       status,
       instructions: _instructions,
-    } = req.body
+    } = req.body;
+
+    console.log("BODY ===>", req.body);
+    console.log("FILES ===>", req.files);
+    console.log("_tag ===>", _tag);
+    console.log("_instructions ===>", _instructions);
+
     // Get thumbnail image from request files
-    const thumbnail = req.files.thumbnailImage
+    const thumbnail = req.files.thumbnailImage;
 
     // Convert the tag and instructions from stringified Array to Array
-    const tag = JSON.parse(_tag)
-    const instructions = JSON.parse(_instructions)
+    // const tag = JSON.parse(_tag)
+    // const instructions = JSON.parse(_instructions)
 
-    console.log("tag", tag)
-    console.log("instructions", instructions)
+    // console.log("tag", tag)
+    // console.log("instructions", instructions)
+    // Convert the tag and instructions from stringified Array to Array
+const tag = _tag ? JSON.parse(_tag) : [];
+const instructions = _instructions ? JSON.parse(_instructions) : [];
+
+console.log("tag", tag);
+console.log("instructions", instructions);
+
 
     // Check if any of the required fields are missing
     if (
